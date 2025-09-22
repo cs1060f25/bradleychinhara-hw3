@@ -147,19 +147,71 @@
         </div>
       </div>
 
-      <!-- Content Selection Screen -->
-      <div id="content-screen" class="screen">
+      <!-- Path Selection Screen -->
+      <div id="path-screen" class="screen">
         <div class="container">
           <div class="progress-header">
             <button class="back-btn" onclick="showScreen('mood-screen')">&larr;</button>
             <div class="progress-bar">
-              <div class="progress-fill" style="width: 75%"></div>
+              <div class="progress-fill" style="width: 60%"></div>
             </div>
-            <span class="step-indicator">3/4</span>
+            <span class="step-indicator">3/5</span>
           </div>
           
-          <h2>Your Curated Learning Pack</h2>
-          <p class="subtitle">AI-selected content for your 35-minute commute</p>
+          <h2>Choose Your Learning Path</h2>
+          <p class="subtitle">How would you like to explore today?</p>
+          
+          <div class="path-options">
+            <div class="path-card" onclick="selectPath('focus')">
+              <div class="path-icon">🎯</div>
+              <div class="path-info">
+                <h3>Focus on Skills</h3>
+                <p>Deep dive into your selected topics</p>
+                <small>Curated content aligned with your interests</small>
+              </div>
+            </div>
+            
+            <div class="path-card" onclick="selectPath('explore')">
+              <div class="path-icon">🌟</div>
+              <div class="path-info">
+                <h3>Explore Something New</h3>
+                <p>Mix familiar topics with fresh perspectives</p>
+                <small>Includes 1-2 surprise recommendations</small>
+              </div>
+            </div>
+          </div>
+          
+          <div class="difficulty-section">
+            <h3>Preferred Difficulty</h3>
+            <div class="difficulty-options">
+              <button class="difficulty-btn" data-level="Beginner" onclick="setDifficulty('Beginner')">Beginner</button>
+              <button class="difficulty-btn active" data-level="Intermediate" onclick="setDifficulty('Intermediate')">Intermediate</button>
+              <button class="difficulty-btn" data-level="Advanced" onclick="setDifficulty('Advanced')">Advanced</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Selection Screen -->
+      <div id="content-screen" class="screen">
+        <div class="container">
+          <div class="progress-header">
+            <button class="back-btn" onclick="showScreen('path-screen')">&larr;</button>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 80%"></div>
+            </div>
+            <span class="step-indicator">4/5</span>
+          </div>
+          
+          <div class="content-header-info">
+            <h2>Your Curated Learning Pack</h2>
+            <p class="subtitle">AI-selected content for your 35-minute commute</p>
+            <div class="loading-shimmer" id="content-loading">
+              <div class="shimmer-line"></div>
+              <div class="shimmer-line"></div>
+              <div class="shimmer-line"></div>
+            </div>
+          </div>
           
           <div class="content-grid">
             <div class="content-card featured" onclick="selectContent(this)">
@@ -240,35 +292,109 @@
         </div>
       </div>
 
+      <!-- Quiz Screen -->
+      <div id="quiz-screen" class="screen">
+        <div class="container">
+          <div class="quiz-header">
+            <h2>Quick Knowledge Check</h2>
+            <p class="subtitle">Let's see what you learned!</p>
+            <div class="quiz-progress">
+              <span id="quiz-question-number">1</span> of <span id="quiz-total-questions">2</span>
+            </div>
+          </div>
+          
+          <div class="quiz-content">
+            <div class="quiz-question">
+              <h3 id="quiz-question-text">What is the key leadership challenge with AI adoption?</h3>
+            </div>
+            
+            <div class="quiz-options" id="quiz-options">
+              <!-- Options will be populated dynamically -->
+            </div>
+            
+            <div class="quiz-feedback" id="quiz-feedback" style="display: none;">
+              <div class="feedback-content">
+                <div class="feedback-icon" id="feedback-icon">✅</div>
+                <div class="feedback-text" id="feedback-text">Correct! Great job.</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="quiz-actions">
+            <button class="btn-secondary" onclick="skipQuiz()">Skip Quiz</button>
+            <button class="btn-primary" onclick="nextQuizQuestion()" id="quiz-next-btn" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reflection Screen -->
+      <div id="reflection-screen" class="screen">
+        <div class="container">
+          <div class="reflection-content">
+            <h2>Quick Reflection</h2>
+            <p class="subtitle">What's one key insight you'll apply today?</p>
+            
+            <div class="reflection-input">
+              <textarea id="reflection-text" placeholder="Share your thoughts... (optional)" rows="4"></textarea>
+            </div>
+            
+            <div class="reflection-actions">
+              <button class="btn-secondary" onclick="skipReflection()">Skip</button>
+              <button class="btn-primary" onclick="saveReflection()">Save & Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Completion Screen -->
       <div id="completion-screen" class="screen">
         <div class="container">
           <div class="completion-content">
-            <div class="completion-icon">🎉</div>
-            <h2>Great job, Quinn!</h2>
+            <div class="completion-celebration" id="completion-celebration">
+              <div class="completion-icon">🎉</div>
+              <div class="badge-earned" id="badge-earned" style="display: none;">
+                <div class="badge-icon">🔥</div>
+                <div class="badge-text">New Badge Earned!</div>
+              </div>
+            </div>
+            
+            <h2>Excellent work, Quinn!</h2>
             <p class="subtitle">You've completed today's learning journey</p>
             
             <div class="completion-stats">
               <div class="stat">
-                <span class="stat-number">8</span>
+                <span class="stat-number" id="completion-minutes">8</span>
                 <span class="stat-label">Minutes learned</span>
               </div>
               <div class="stat">
-                <span class="stat-number">3</span>
+                <span class="stat-number" id="completion-insights">3</span>
                 <span class="stat-label">Key insights</span>
               </div>
               <div class="stat">
-                <span class="stat-number">48</span>
+                <span class="stat-number" id="completion-streak">48</span>
                 <span class="stat-label">Day streak!</span>
               </div>
             </div>
+
+            <!-- Premium Analytics -->
+            <div class="premium-analytics" id="premium-analytics">
+              <h3>📊 Your Learning Analytics</h3>
+              <div class="analytics-grid">
+                <div class="analytics-item">
+                  <span class="analytics-number" id="total-time">20.7</span>
+                  <span class="analytics-label">Hours this month</span>
+                </div>
+                <div class="analytics-item">
+                  <span class="analytics-number" id="skills-advanced">4</span>
+                  <span class="analytics-label">Skills advanced</span>
+                </div>
+              </div>
+            </div>
             
-            <div class="key-takeaways">
+            <div class="key-takeaways" id="key-takeaways">
               <h3>Your Key Takeaways</h3>
-              <ul>
-                <li>AI amplifies need for human leadership skills</li>
-                <li>Focus on emotional intelligence as competitive advantage</li>
-                <li>Balance tech adoption with human-centered decisions</li>
+              <ul id="takeaways-list">
+                <!-- Populated dynamically -->
               </ul>
             </div>
             

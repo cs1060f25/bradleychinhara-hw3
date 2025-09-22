@@ -9,29 +9,281 @@ let selectedContent = null;
 let currentLessonSection = 0;
 let lessonTimer = null;
 let isPaused = false;
+let userProfile = null;
+let selectedPath = null;
+let quizAnswers = [];
 
-// Lesson content data
-const lessonSections = [
+// Dynamic lesson pool with varied content
+const lessonPool = [
   {
-    title: "Key Insight #1: The Leadership Paradox",
-    content: "While AI automates routine tasks, it amplifies the need for uniquely human leadership skills. Executives must balance technological adoption with human-centered decision making.",
-    takeaway: "Focus on developing emotional intelligence and strategic thinking as AI handles operational complexity."
+    id: 'ai-leadership',
+    title: 'Leading Through AI Transformation',
+    type: 'Executive Brief',
+    duration: 8,
+    difficulty: 'Advanced',
+    creator: 'Sarah Chen, McKinsey',
+    summary: 'Strategic insights for executives navigating AI adoption in finance',
+    moods: ['focused', 'reflective'],
+    topics: ['AI & Leadership', 'Executive Skills'],
+    sections: [
+      {
+        title: "The Leadership Paradox",
+        content: "While AI automates routine tasks, it amplifies the need for uniquely human leadership skills. Executives must balance technological adoption with human-centered decision making.",
+        takeaway: "Focus on developing emotional intelligence and strategic thinking as AI handles operational complexity."
+      },
+      {
+        title: "Strategic Implementation",
+        content: "Successful AI transformation requires a phased approach. Start with pilot programs in non-critical areas to build confidence and learn before scaling to core business functions.",
+        takeaway: "Begin with low-risk, high-impact AI implementations to demonstrate value and build organizational buy-in."
+      }
+    ],
+    quiz: [
+      {
+        question: "What is the key leadership challenge with AI adoption?",
+        options: ["Technical complexity", "Balancing automation with human skills", "Cost management", "Timeline pressure"],
+        correct: 1
+      },
+      {
+        question: "What's the recommended approach for AI implementation?",
+        options: ["Full deployment immediately", "Phased pilot programs", "Wait for competitors", "Outsource completely"],
+        correct: 1
+      }
+    ]
   },
   {
-    title: "Key Insight #2: Strategic Implementation",
-    content: "Successful AI transformation requires a phased approach. Start with pilot programs in non-critical areas to build confidence and learn before scaling to core business functions.",
-    takeaway: "Begin with low-risk, high-impact AI implementations to demonstrate value and build organizational buy-in."
+    id: 'fintech-trends',
+    title: 'Q4 Fintech Market Pulse',
+    type: 'Market Analysis',
+    duration: 12,
+    difficulty: 'Intermediate',
+    creator: 'Bloomberg Intelligence',
+    summary: 'Key market movements and emerging opportunities in fintech',
+    moods: ['curious', 'focused'],
+    topics: ['Fintech Trends', 'Market Analysis'],
+    sections: [
+      {
+        title: "Digital Banking Evolution",
+        content: "Traditional banks are accelerating digital transformation, with 73% increasing tech budgets. Neo-banks face profitability pressure as interest rates rise.",
+        takeaway: "Focus on sustainable unit economics over rapid growth in current market conditions."
+      },
+      {
+        title: "Regulatory Landscape Shifts",
+        content: "New regulations around crypto and open banking create both challenges and opportunities. Compliance-first companies are gaining competitive advantages.",
+        takeaway: "Early regulatory compliance investment pays dividends in market access and customer trust."
+      }
+    ],
+    quiz: [
+      {
+        question: "What percentage of traditional banks increased tech budgets?",
+        options: ["63%", "73%", "83%", "93%"],
+        correct: 1
+      }
+    ]
   },
   {
-    title: "Key Insight #3: Team Adaptation",
-    content: "The most successful AI implementations involve extensive change management. Teams need clear communication about how AI will augment, not replace, their roles.",
-    takeaway: "Invest heavily in communication and training to ensure smooth team transitions during AI adoption."
+    id: 'negotiation-tactics',
+    title: 'Executive Negotiation Mastery',
+    type: 'Skill Builder',
+    duration: 15,
+    difficulty: 'Advanced',
+    creator: 'Harvard Business Review',
+    summary: 'Advanced techniques for high-stakes business negotiations',
+    moods: ['focused', 'energetic'],
+    topics: ['Executive Skills', 'Team Management'],
+    sections: [
+      {
+        title: "Anchoring Strategies",
+        content: "The first number mentioned in a negotiation disproportionately influences the final outcome. Strategic anchoring can shift negotiations by 20-30%.",
+        takeaway: "Always prepare multiple anchor points and lead with ambitious but justifiable positions."
+      },
+      {
+        title: "Reading Micro-Signals",
+        content: "Successful negotiators read verbal and non-verbal cues to understand true positions. Watch for hesitation patterns and body language shifts.",
+        takeaway: "Pause after key statements to observe reactions and gather intelligence on counterpart priorities."
+      }
+    ],
+    quiz: [
+      {
+        question: "How much can strategic anchoring influence negotiations?",
+        options: ["10-15%", "20-30%", "40-50%", "60-70%"],
+        correct: 1
+      }
+    ]
+  },
+  {
+    id: 'blockchain-basics',
+    title: 'Blockchain for Finance Leaders',
+    type: 'Tech Primer',
+    duration: 10,
+    difficulty: 'Beginner',
+    creator: 'MIT Sloan',
+    summary: 'Essential blockchain concepts every finance executive should know',
+    moods: ['curious', 'reflective'],
+    topics: ['Blockchain', 'Fintech Trends'],
+    sections: [
+      {
+        title: "Beyond Cryptocurrency",
+        content: "Blockchain's real value lies in immutable record-keeping and smart contracts. JPMorgan processes $6B daily through blockchain networks.",
+        takeaway: "Focus on blockchain's efficiency gains in clearing, settlement, and compliance rather than speculative assets."
+      }
+    ],
+    quiz: [
+      {
+        question: "What's blockchain's primary business value?",
+        options: ["Cryptocurrency trading", "Immutable records and smart contracts", "Social media", "Gaming"],
+        correct: 1
+      }
+    ]
+  },
+  {
+    id: 'team-psychology',
+    title: 'Remote Team Dynamics',
+    type: 'Leadership',
+    duration: 7,
+    difficulty: 'Intermediate',
+    creator: 'Stanford GSB',
+    summary: 'Building high-performance distributed teams in finance',
+    moods: ['reflective', 'focused'],
+    topics: ['Team Management', 'Executive Skills'],
+    sections: [
+      {
+        title: "Trust at Distance",
+        content: "Remote teams require explicit trust-building mechanisms. Weekly one-on-ones and transparent goal-setting increase team performance by 40%.",
+        takeaway: "Over-communicate expectations and create structured touchpoints to maintain team cohesion."
+      }
+    ],
+    quiz: [
+      {
+        question: "How much can structured remote management improve performance?",
+        options: ["20%", "30%", "40%", "50%"],
+        correct: 2
+      }
+    ]
+  },
+  {
+    id: 'market-volatility',
+    title: 'Leading Through Market Uncertainty',
+    type: 'Crisis Management',
+    duration: 9,
+    difficulty: 'Advanced',
+    creator: 'Wharton Executive Education',
+    summary: 'Decision-making frameworks for volatile market conditions',
+    moods: ['focused', 'reflective'],
+    topics: ['Market Analysis', 'Executive Skills'],
+    sections: [
+      {
+        title: "Scenario Planning Excellence",
+        content: "Top-performing firms use 3-scenario planning: optimistic, realistic, pessimistic. This approach reduces decision paralysis by 60% during crises.",
+        takeaway: "Prepare multiple contingency plans and communicate decision triggers clearly to your team."
+      }
+    ],
+    quiz: [
+      {
+        question: "How many scenarios should leaders prepare?",
+        options: ["2", "3", "4", "5"],
+        correct: 1
+      }
+    ]
   }
 ];
 
+// Badge system
+const badges = [
+  { id: 'streak_7', name: 'Week Warrior', description: '7-day learning streak', icon: '🔥', requirement: 7 },
+  { id: 'streak_30', name: 'Monthly Master', description: '30-day learning streak', icon: '💎', requirement: 30 },
+  { id: 'topics_5', name: 'Curious Mind', description: 'Explored 5 different topics', icon: '🧠', requirement: 5 },
+  { id: 'advanced_3', name: 'Expert Level', description: 'Completed 3 advanced lessons', icon: '🎯', requirement: 3 },
+  { id: 'quiz_perfect', name: 'Perfect Score', description: 'Aced 5 quizzes in a row', icon: '⭐', requirement: 5 }
+];
+
+// User persistence and profile management
+function loadUserProfile() {
+  const saved = localStorage.getItem('commutr_profile');
+  if (saved) {
+    userProfile = JSON.parse(saved);
+    updateWelcomeStats();
+  } else {
+    userProfile = {
+      name: 'Quinn',
+      streak: 47,
+      topicsMastered: 12,
+      lessonsCompleted: 156,
+      badges: ['streak_7', 'streak_30', 'topics_5'],
+      quizHistory: [],
+      preferredDifficulty: 'Advanced',
+      isPremium: true,
+      totalMinutesLearned: 1240,
+      lastCommute: null,
+      nextCommutePlan: null
+    };
+    saveUserProfile();
+  }
+}
+
+function saveUserProfile() {
+  localStorage.setItem('commutr_profile', JSON.stringify(userProfile));
+}
+
+function updateWelcomeStats() {
+  if (userProfile) {
+    document.querySelector('.stat-card:nth-child(1) .stat-number').textContent = userProfile.streak;
+    document.querySelector('.stat-card:nth-child(2) .stat-number').textContent = userProfile.topicsMastered;
+    document.querySelector('.stat-card:nth-child(3) .stat-number').textContent = userProfile.lessonsCompleted;
+  }
+}
+
+// Dynamic content recommendation engine
+function getRecommendedLessons(commuteDuration, mood, topics, path = 'focus') {
+  let availableLessons = lessonPool.filter(lesson => {
+    // Filter by commute duration (allow some flexibility)
+    const durationMatch = lesson.duration <= commuteDuration + 2;
+    
+    // Filter by mood
+    const moodMatch = lesson.moods.includes(mood);
+    
+    // Filter by topics (if focusing)
+    const topicMatch = path === 'explore' || 
+      lesson.topics.some(topic => topics.includes(topic));
+    
+    return durationMatch && (moodMatch || path === 'explore') && topicMatch;
+  });
+
+  // Add difficulty preference filtering
+  if (userProfile.preferredDifficulty) {
+    const preferredLessons = availableLessons.filter(l => l.difficulty === userProfile.preferredDifficulty);
+    const otherLessons = availableLessons.filter(l => l.difficulty !== userProfile.preferredDifficulty);
+    availableLessons = [...preferredLessons, ...otherLessons];
+  }
+
+  // Add surprise element for explore mode
+  if (path === 'explore') {
+    const surpriseLessons = lessonPool.filter(lesson => 
+      lesson.duration <= commuteDuration + 2 && 
+      !lesson.topics.some(topic => topics.includes(topic))
+    );
+    availableLessons = [...availableLessons, ...surpriseLessons.slice(0, 1)];
+  }
+
+  // Shuffle and return top 3
+  return shuffleArray(availableLessons).slice(0, 3);
+}
+
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
-  // Simulate loading
+  loadUserProfile();
+  
+  // Simulate loading with dynamic messages
+  simulateAIProcessing();
+  
   setTimeout(() => {
     showScreen('welcome-screen');
   }, 2000);
