@@ -127,7 +127,8 @@ function loadUserProfile() {
       preferredDifficulty: 'Advanced',
       isPremium: true,
       totalMinutesLearned: 1240,
-      reflections: []
+      reflections: [],
+      lastSessionDate: null
     };
     saveUserProfile();
   }
@@ -180,6 +181,20 @@ function shuffleArray(array) {
   return shuffled;
 }
 
+// Generate mood-based explanation
+function getMoodExplanation(mood, path) {
+  const explanations = {
+    focused: `Because you chose <strong>Focused</strong>, we prioritized strategic leadership content with clear takeaways.`,
+    curious: `Because you chose <strong>Curious</strong>, we included diverse topics and emerging trends to explore.`,
+    energetic: `Because you chose <strong>Energetic</strong>, we selected dynamic content with actionable insights.`,
+    reflective: `Because you chose <strong>Reflective</strong>, we prioritized leadership strategy and thoughtful analysis.`
+  };
+  
+  const pathNote = path === 'explore' ? ' We also added surprise recommendations to broaden your perspective.' : '';
+  
+  return `<p class="mood-explanation-text">${explanations[mood] || explanations.focused}${pathNote}</p>`;
+}
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
   loadUserProfile();
@@ -208,7 +223,7 @@ function showScreen(screenId) {
       if (contentGrid && contentGrid.children.length === 0) {
         generateContentRecommendations();
       }
-    } else if (screenId === 'path-screen') {
+    } else if (screenId === 'mood-screen') {
       // Set the correct difficulty button as active
       if (userProfile && userProfile.preferredDifficulty) {
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
@@ -322,6 +337,18 @@ function generateContentRecommendations() {
     
     const recommendations = getRecommendedLessons(commuteDuration, mood, topics, path);
     
+    // Add mood personalization explanation
+    const headerInfo = document.querySelector('.content-header-info');
+    const existingExplanation = headerInfo.querySelector('.mood-explanation');
+    if (existingExplanation) {
+      existingExplanation.remove();
+    }
+    
+    const moodExplanation = document.createElement('div');
+    moodExplanation.className = 'mood-explanation';
+    moodExplanation.innerHTML = getMoodExplanation(mood, path);
+    headerInfo.appendChild(moodExplanation);
+    
     contentGrid.innerHTML = '';
     
     recommendations.forEach((lesson, index) => {
@@ -348,11 +375,11 @@ function createContentCard(lesson, isFeatured = false) {
     <div class="content-header">
       <span class="content-type">${lesson.type}</span>
       <span class="duration">${lesson.duration} min</span>
+      <span class="difficulty-chip ${lesson.difficulty.toLowerCase()}">${lesson.difficulty}</span>
     </div>
     <h3>${lesson.title}</h3>
     <p>${lesson.summary}</p>
     <div class="content-meta">
-      <span class="difficulty">${lesson.difficulty}</span>
       <span class="creator">by ${lesson.creator}</span>
     </div>
     ${isFeatured ? '<div class="recommended-badge">🎯 Perfect Match</div>' : ''}
@@ -430,23 +457,30 @@ function previousSection() {
 
 // Lesson timer
 function startLessonTimer() {
-  let timeRemaining = selectedContent.duration * 60;
+  const commuteMinutes = selectedCommute ? selectedCommute.duration : selectedContent.duration;
+  let timeRemaining = selectedContent.duration * 60; // Actual lesson time
   
-  lessonTimer = setInterval(() => {
-    if (!isPaused) {
-      timeRemaining--;
-      
-      const minutes = Math.floor(timeRemaining / 60);
-      const seconds = timeRemaining % 60;
-      document.getElementById('time-remaining').textContent = 
-        `${minutes}:${seconds.toString().padStart(2, '0')} remaining`;
-      
-      if (timeRemaining <= 0) {
-        clearInterval(lessonTimer);
-        startQuiz();
+  // Initially show commute match, not remaining time
+  const timeDisplay = document.getElementById('time-remaining');
+  timeDisplay.textContent = `Matched to your ${commuteMinutes}-minute commute`;
+  
+  // Start the actual timer after a brief delay
+  setTimeout(() => {
+    lessonTimer = setInterval(() => {
+      if (!isPaused) {
+        timeRemaining--;
+        
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} remaining`;
+        
+        if (timeRemaining <= 0) {
+          clearInterval(lessonTimer);
+          startQuiz();
+        }
       }
-    }
-  }, 1000);
+    }, 1000);
+  }, 2000); // Show commute match for 2 seconds before starting countdown
 }
 
 // Pause/resume functionality
@@ -558,12 +592,23 @@ function skipReflection() {
 
 // Enhanced completion
 function completeLearning() {
+  // Calculate actual session time based on commute duration
+  const sessionMinutes = selectedCommute ? selectedCommute.duration : selectedContent.duration;
+  
   userProfile.lessonsCompleted++;
-  userProfile.totalMinutesLearned += selectedContent.duration;
-  userProfile.streak++;
+  userProfile.totalMinutesLearned += sessionMinutes;
+  
+  // Only increment streak once per day (check if last session was today)
+  const today = new Date().toDateString();
+  const lastSessionDate = userProfile.lastSessionDate;
+  
+  if (lastSessionDate !== today) {
+    userProfile.streak++;
+    userProfile.lastSessionDate = today;
+  }
   
   const newBadges = checkForNewBadges();
-  updateCompletionScreen(newBadges);
+  updateCompletionScreen(newBadges, sessionMinutes);
   
   saveUserProfile();
   showScreen('completion-screen');
@@ -600,8 +645,11 @@ function checkForNewBadges() {
   return newBadges;
 }
 
-function updateCompletionScreen(newBadges) {
-  document.getElementById('completion-minutes').textContent = selectedContent.duration;
+function updateCompletionScreen(newBadges, sessionMinutes) {
+  // Use actual session time, not just lesson duration
+  const minutesLearned = sessionMinutes || selectedContent.duration;
+  
+  document.getElementById('completion-minutes').textContent = minutesLearned;
   document.getElementById('completion-insights').textContent = selectedContent.sections.length;
   document.getElementById('completion-streak').textContent = userProfile.streak;
   
@@ -626,10 +674,16 @@ function updateCompletionScreen(newBadges) {
   });
 }
 
-// Enhanced sharing
+// Enhanced sharing - LinkedIn-style
 function shareInsights() {
-  const insights = selectedContent.sections.map(section => `• ${section.takeaway}`).join('\n');
-  const shareText = `Day ${userProfile.streak} on Commutr — learned ${selectedContent.title.toLowerCase()}.\n\nKey insights:\n${insights}\n\n#microlearning #commute`;
+  const sessionMinutes = selectedCommute ? selectedCommute.duration : selectedContent.duration;
+  const topicArea = selectedContent.topics ? selectedContent.topics[0] : 'leadership';
+  
+  const shareText = `Day ${userProfile.streak} on Commutr — learned ${topicArea.toLowerCase()} strategies during my ${sessionMinutes}-minute commute. 
+
+Key insight: ${selectedContent.sections[0].takeaway}
+
+#microlearning #commute #executivelearning`;
   
   if (navigator.share) {
     navigator.share({
@@ -638,23 +692,24 @@ function shareInsights() {
     });
   } else {
     navigator.clipboard.writeText(shareText).then(() => {
-      showToast('Insights copied to clipboard!');
+      showToast('LinkedIn post copied to clipboard!');
     });
   }
 }
 
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.remove();
-  }, 3000);
-}
-
+// Plan next commute with pre-setting
 function planNextCommute() {
+  // Save current preferences for next session
+  const nextCommutePlan = {
+    duration: selectedCommute ? selectedCommute.duration : 15,
+    mood: selectedMood || 'focused',
+    difficulty: userProfile.preferredDifficulty
+  };
+  
+  userProfile.nextCommutePlan = nextCommutePlan;
+  saveUserProfile();
+  
+  // Reset current session
   selectedCommute = null;
   selectedMood = null;
   selectedTopics = [];
@@ -669,8 +724,21 @@ function planNextCommute() {
   document.getElementById('mood-continue-btn').disabled = true;
   document.getElementById('content-continue-btn').disabled = true;
   
+  showToast('Next commute preferences saved!');
   showScreen('welcome-screen');
 }
+
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
 
 // Simulate realistic loading states
 function simulateAIProcessing() {

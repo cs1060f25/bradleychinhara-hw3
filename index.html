@@ -1,10 +1,12 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Commutr - Micro-Learning for Your Commute</title>
-    <meta name="description" content="AI-powered micro-learning platform that adapts to your commute duration. Transform travel time into growth time." />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commutr - Micro-Learning for Executives</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -126,8 +128,8 @@
             </div>
           </div>
           
-          <div class="interest-section">
-            <h3>Trending Topics</h3>
+          <div class="topic-selection">
+            <h3>What interests you today?</h3>
             <div class="topic-cloud">
               <span class="topic-tag" onclick="toggleTopic(this)">AI & Leadership</span>
               <span class="topic-tag" onclick="toggleTopic(this)">Fintech Trends</span>
@@ -140,6 +142,15 @@
             <div class="search-container">
               <input type="text" placeholder="Search for specific topics..." class="search-input">
               <button class="search-btn">🔍</button>
+            </div>
+          </div>
+          
+          <div class="difficulty-selection">
+            <h3>Preferred difficulty level</h3>
+            <div class="difficulty-options">
+              <button class="difficulty-btn" data-level="Beginner" onclick="setDifficulty('Beginner')">Beginner</button>
+              <button class="difficulty-btn active" data-level="Intermediate" onclick="setDifficulty('Intermediate')">Intermediate</button>
+              <button class="difficulty-btn" data-level="Advanced" onclick="setDifficulty('Advanced')">Advanced</button>
             </div>
           </div>
           
@@ -181,14 +192,6 @@
             </div>
           </div>
           
-          <div class="difficulty-section">
-            <h3>Preferred Difficulty</h3>
-            <div class="difficulty-options">
-              <button class="difficulty-btn" data-level="Beginner" onclick="setDifficulty('Beginner')">Beginner</button>
-              <button class="difficulty-btn active" data-level="Intermediate" onclick="setDifficulty('Intermediate')">Intermediate</button>
-              <button class="difficulty-btn" data-level="Advanced" onclick="setDifficulty('Advanced')">Advanced</button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -340,7 +343,15 @@
 
             <!-- Premium Analytics -->
             <div class="premium-analytics" id="premium-analytics">
-              <h3>📊 Your Learning Analytics</h3>
+              <div class="premium-header">
+                <h3>📊 Premium Analytics</h3>
+                <span class="premium-badge">✓ Ad-free session</span>
+              </div>
+              <div class="analytics-summary">
+                <p><strong>Leadership Pathway:</strong> <span id="pathway-progress">72%</span> complete</p>
+                <p><strong>Streak:</strong> <span id="analytics-streak">48</span> days</p>
+                <p><strong>New badge:</strong> <span id="new-badge-name">Strategic Thinker</span></p>
+              </div>
               <div class="analytics-grid">
                 <div class="analytics-item">
                   <span class="analytics-number" id="total-time">20.7</span>
@@ -361,7 +372,7 @@
             </div>
             
             <div class="completion-actions">
-              <button class="btn-primary" onclick="shareInsights()">Share Insights</button>
+              <button class="btn-primary" onclick="shareInsights()">Copy LinkedIn Post</button>
               <button class="btn-secondary" onclick="planNextCommute()">Plan Next Commute</button>
             </div>
           </div>
