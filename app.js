@@ -201,6 +201,24 @@ function showScreen(screenId) {
     const newScreen = document.getElementById(screenId);
     newScreen.classList.add('active');
     currentScreen = screenId;
+    
+    // Handle screen-specific initialization
+    if (screenId === 'content-screen') {
+      const contentGrid = document.querySelector('.content-grid');
+      if (contentGrid && contentGrid.children.length === 0) {
+        generateContentRecommendations();
+      }
+    } else if (screenId === 'path-screen') {
+      // Set the correct difficulty button as active
+      if (userProfile && userProfile.preferredDifficulty) {
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.level === userProfile.preferredDifficulty) {
+            btn.classList.add('active');
+          }
+        });
+      }
+    }
   }, 150);
 }
 
@@ -289,16 +307,20 @@ function generateContentRecommendations() {
   const contentGrid = document.querySelector('.content-grid');
   const loadingShimmer = document.getElementById('content-loading');
   
-  loadingShimmer.style.display = 'block';
+  // Show loading shimmer
+  if (loadingShimmer) {
+    loadingShimmer.style.display = 'block';
+  }
   contentGrid.style.display = 'none';
   
   setTimeout(() => {
-    const recommendations = getRecommendedLessons(
-      selectedCommute.duration, 
-      selectedMood, 
-      selectedTopics, 
-      selectedPath
-    );
+    // Use defaults if not set
+    const commuteDuration = selectedCommute ? selectedCommute.duration : 15;
+    const mood = selectedMood || 'focused';
+    const topics = selectedTopics.length > 0 ? selectedTopics : ['AI & Leadership'];
+    const path = selectedPath || 'focus';
+    
+    const recommendations = getRecommendedLessons(commuteDuration, mood, topics, path);
     
     contentGrid.innerHTML = '';
     
@@ -307,7 +329,10 @@ function generateContentRecommendations() {
       contentGrid.appendChild(card);
     });
     
-    loadingShimmer.style.display = 'none';
+    // Hide loading and show content
+    if (loadingShimmer) {
+      loadingShimmer.style.display = 'none';
+    }
     contentGrid.style.display = 'flex';
     
   }, 1500);

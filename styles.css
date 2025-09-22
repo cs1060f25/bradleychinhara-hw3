@@ -791,6 +791,7 @@ h2 {
 /* Loading Shimmer */
 .loading-shimmer {
   margin: 20px 0;
+  display: none;
 }
 
 .shimmer-line {
