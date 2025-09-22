@@ -3,79 +3,284 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hello World</title>
-    <meta name="description" content="A minimal Hello World site ready to deploy on Netlify or Vercel." />
-    <style>
-      :root {
-        --bg: #0f172a;
-        --card: #111827;
-        --text: #e5e7eb;
-        --muted: #9ca3af;
-        --accent: #22c55e;
-      }
-      * { box-sizing: border-box; }
-      html, body { height: 100%; }
-      body {
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-        color: var(--text);
-        background: radial-gradient(1200px 800px at 10% 10%, #111827 0%, var(--bg) 40%, #0b1222 100%);
-        display: grid;
-        place-items: center;
-        padding: 24px;
-      }
-      .card {
-        width: 100%;
-        max-width: 720px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 16px;
-        padding: 28px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
-        backdrop-filter: blur(6px);
-      }
-      h1 {
-        margin: 0 0 8px;
-        font-size: 40px;
-        letter-spacing: -0.02em;
-      }
-      p { margin: 0; color: var(--muted); }
-      .actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
-      .btn {
-        padding: 10px 14px;
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.12);
-        background: rgba(255,255,255,0.04);
-        color: var(--text);
-        text-decoration: none;
-        transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
-      }
-      .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.06); }
-      .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
-      .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
-      footer { margin-top: 20px; font-size: 12px; color: var(--muted); }
-      code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 6px; }
-    </style>
+    <title>Commutr - Micro-Learning for Your Commute</title>
+    <meta name="description" content="AI-powered micro-learning platform that adapts to your commute duration. Transform travel time into growth time." />
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="card" role="main">
-      <div class="badge" aria-live="polite" aria-label="deployment ready indicator">
-        <span class="dot" aria-hidden="true"></span>
-        Deployment ready
+    <div id="app">
+      <!-- Loading Screen -->
+      <div id="loading-screen" class="screen active">
+        <div class="loading-container">
+          <div class="logo">
+            <div class="logo-icon">🚊</div>
+            <h1>Commutr</h1>
+          </div>
+          <div class="loading-spinner"></div>
+          <p>Preparing your personalized learning journey...</p>
+        </div>
       </div>
-      <h1>Hello, World! 🌍</h1>
-      <p>
-        This is a minimal, production-ready static site you can deploy on
-        <strong>Netlify</strong> or <strong>Vercel</strong> in seconds.
-      </p>
-      <div class="actions">
-        <a class="btn" href="https://app.netlify.com/drop" target="_blank" rel="noreferrer">Deploy to Netlify (Drag & Drop)</a>
-        <a class="btn" href="https://vercel.com/new" target="_blank" rel="noreferrer">Deploy to Vercel</a>
-        <a class="btn" href="./" onclick="navigator.clipboard.writeText(location.href);return false;">Copy URL</a>
+
+      <!-- Welcome Screen -->
+      <div id="welcome-screen" class="screen">
+        <div class="container">
+          <div class="header">
+            <div class="logo">
+              <div class="logo-icon">🚊</div>
+              <h1>Commutr</h1>
+            </div>
+            <div class="premium-badge">Premium</div>
+          </div>
+          
+          <div class="welcome-content">
+            <h2>Welcome back, Quinn! 👋</h2>
+            <p class="subtitle">Ready to turn your commute into growth time?</p>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-number">47</div>
+                <div class="stat-label">Day Streak</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Topics Mastered</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">156</div>
+                <div class="stat-label">Lessons Completed</div>
+              </div>
+            </div>
+            
+            <button class="btn-primary" onclick="startCommute()">Start Today's Commute</button>
+          </div>
+        </div>
       </div>
-      <footer>
-        Tip: push this folder to GitHub and import into Netlify/Vercel for CI.
-      </footer>
-    </main>
+
+      <!-- Commute Setup Screen -->
+      <div id="commute-screen" class="screen">
+        <div class="container">
+          <div class="progress-header">
+            <button class="back-btn" onclick="showScreen('welcome-screen')">&larr;</button>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 25%"></div>
+            </div>
+            <span class="step-indicator">1/4</span>
+          </div>
+          
+          <h2>How long is your commute today?</h2>
+          <p class="subtitle">We'll curate the perfect learning experience for your journey</p>
+          
+          <div class="commute-options">
+            <div class="commute-card" onclick="selectCommute(35, 'auto')">
+              <div class="commute-icon">📍</div>
+              <div class="commute-info">
+                <h3>Auto-Detected</h3>
+                <p>35 minutes to Financial District</p>
+                <small>Based on your calendar & GPS</small>
+              </div>
+              <div class="commute-badge">Recommended</div>
+            </div>
+            
+            <div class="commute-card" onclick="selectCommute(null, 'manual')">
+              <div class="commute-icon">⏱️</div>
+              <div class="commute-info">
+                <h3>Manual Entry</h3>
+                <p>Set custom duration</p>
+                <small>For flexible schedules</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mood & Interest Screen -->
+      <div id="mood-screen" class="screen">
+        <div class="container">
+          <div class="progress-header">
+            <button class="back-btn" onclick="showScreen('commute-screen')">&larr;</button>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 50%"></div>
+            </div>
+            <span class="step-indicator">2/4</span>
+          </div>
+          
+          <h2>What's your vibe today?</h2>
+          <p class="subtitle">Help us match content to your current mood and interests</p>
+          
+          <div class="mood-grid">
+            <div class="mood-card" onclick="selectMood('focused')">
+              <div class="mood-emoji">🎯</div>
+              <span>Focused</span>
+            </div>
+            <div class="mood-card" onclick="selectMood('curious')">
+              <div class="mood-emoji">🤔</div>
+              <span>Curious</span>
+            </div>
+            <div class="mood-card" onclick="selectMood('energetic')">
+              <div class="mood-emoji">⚡</div>
+              <span>Energetic</span>
+            </div>
+            <div class="mood-card" onclick="selectMood('reflective')">
+              <div class="mood-emoji">💭</div>
+              <span>Reflective</span>
+            </div>
+          </div>
+          
+          <div class="interest-section">
+            <h3>Trending Topics</h3>
+            <div class="topic-cloud">
+              <span class="topic-tag" onclick="toggleTopic(this)">AI & Leadership</span>
+              <span class="topic-tag" onclick="toggleTopic(this)">Fintech Trends</span>
+              <span class="topic-tag" onclick="toggleTopic(this)">Executive Skills</span>
+              <span class="topic-tag" onclick="toggleTopic(this)">Market Analysis</span>
+              <span class="topic-tag" onclick="toggleTopic(this)">Team Management</span>
+              <span class="topic-tag" onclick="toggleTopic(this)">Blockchain</span>
+            </div>
+            
+            <div class="search-container">
+              <input type="text" placeholder="Search for specific topics..." class="search-input">
+              <button class="search-btn">🔍</button>
+            </div>
+          </div>
+          
+          <button class="btn-primary" onclick="showScreen('content-screen')" disabled id="mood-continue-btn">Continue</button>
+        </div>
+      </div>
+
+      <!-- Content Selection Screen -->
+      <div id="content-screen" class="screen">
+        <div class="container">
+          <div class="progress-header">
+            <button class="back-btn" onclick="showScreen('mood-screen')">&larr;</button>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 75%"></div>
+            </div>
+            <span class="step-indicator">3/4</span>
+          </div>
+          
+          <h2>Your Curated Learning Pack</h2>
+          <p class="subtitle">AI-selected content for your 35-minute commute</p>
+          
+          <div class="content-grid">
+            <div class="content-card featured" onclick="selectContent(this)">
+              <div class="content-header">
+                <span class="content-type">Executive Brief</span>
+                <span class="duration">8 min</span>
+              </div>
+              <h3>Leading Through AI Transformation</h3>
+              <p>Strategic insights for executives navigating AI adoption in finance</p>
+              <div class="content-meta">
+                <span class="difficulty">Advanced</span>
+                <span class="creator">by Sarah Chen, McKinsey</span>
+              </div>
+              <div class="recommended-badge">🎯 Perfect Match</div>
+            </div>
+            
+            <div class="content-card" onclick="selectContent(this)">
+              <div class="content-header">
+                <span class="content-type">Market Pulse</span>
+                <span class="duration">12 min</span>
+              </div>
+              <h3>Q4 Fintech Trends Analysis</h3>
+              <p>Key market movements and emerging opportunities</p>
+              <div class="content-meta">
+                <span class="difficulty">Intermediate</span>
+                <span class="creator">by Bloomberg Intelligence</span>
+              </div>
+            </div>
+            
+            <div class="content-card" onclick="selectContent(this)">
+              <div class="content-header">
+                <span class="content-type">Skill Builder</span>
+                <span class="duration">15 min</span>
+              </div>
+              <h3>Negotiation Tactics for Executives</h3>
+              <p>Advanced techniques for high-stakes business negotiations</p>
+              <div class="content-meta">
+                <span class="difficulty">Advanced</span>
+                <span class="creator">by Harvard Business Review</span>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn-primary" onclick="startLearning()" disabled id="content-continue-btn">Start Learning Journey</button>
+        </div>
+      </div>
+
+      <!-- Learning Interface -->
+      <div id="learning-screen" class="screen">
+        <div class="learning-container">
+          <div class="learning-header">
+            <button class="minimize-btn" onclick="minimizeLearning()">−</button>
+            <div class="lesson-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="lesson-progress-fill" style="width: 0%"></div>
+              </div>
+              <span class="time-remaining" id="time-remaining">8:00 remaining</span>
+            </div>
+            <button class="pause-btn" onclick="togglePause()" id="pause-btn">⏸️</button>
+          </div>
+          
+          <div class="lesson-content">
+            <h2 id="lesson-title">Leading Through AI Transformation</h2>
+            <div class="lesson-section" id="lesson-section">
+              <h3>Key Insight #1: The Leadership Paradox</h3>
+              <p>While AI automates routine tasks, it amplifies the need for uniquely human leadership skills. Executives must balance technological adoption with human-centered decision making.</p>
+              
+              <div class="insight-highlight">
+                💡 <strong>Takeaway:</strong> Focus on developing emotional intelligence and strategic thinking as AI handles operational complexity.
+              </div>
+            </div>
+            
+            <div class="lesson-controls">
+              <button class="btn-secondary" onclick="previousSection()" id="prev-btn" disabled>Previous</button>
+              <button class="btn-primary" onclick="nextSection()" id="next-btn">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completion Screen -->
+      <div id="completion-screen" class="screen">
+        <div class="container">
+          <div class="completion-content">
+            <div class="completion-icon">🎉</div>
+            <h2>Great job, Quinn!</h2>
+            <p class="subtitle">You've completed today's learning journey</p>
+            
+            <div class="completion-stats">
+              <div class="stat">
+                <span class="stat-number">8</span>
+                <span class="stat-label">Minutes learned</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number">3</span>
+                <span class="stat-label">Key insights</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number">48</span>
+                <span class="stat-label">Day streak!</span>
+              </div>
+            </div>
+            
+            <div class="key-takeaways">
+              <h3>Your Key Takeaways</h3>
+              <ul>
+                <li>AI amplifies need for human leadership skills</li>
+                <li>Focus on emotional intelligence as competitive advantage</li>
+                <li>Balance tech adoption with human-centered decisions</li>
+              </ul>
+            </div>
+            
+            <div class="completion-actions">
+              <button class="btn-primary" onclick="shareInsights()">Share Insights</button>
+              <button class="btn-secondary" onclick="planNextCommute()">Plan Next Commute</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script src="app.js"></script>
   </body>
 </html>
