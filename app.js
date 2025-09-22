@@ -11,7 +11,8 @@ let lessonTimer = null;
 let isPaused = false;
 let userProfile = null;
 let selectedPath = null;
-let quizAnswers = [];
+let currentQuizQuestion = 0;
+let quizScore = 0;
 
 // Dynamic lesson pool with varied content
 const lessonPool = [
@@ -65,11 +66,6 @@ const lessonPool = [
         title: "Digital Banking Evolution",
         content: "Traditional banks are accelerating digital transformation, with 73% increasing tech budgets. Neo-banks face profitability pressure as interest rates rise.",
         takeaway: "Focus on sustainable unit economics over rapid growth in current market conditions."
-      },
-      {
-        title: "Regulatory Landscape Shifts",
-        content: "New regulations around crypto and open banking create both challenges and opportunities. Compliance-first companies are gaining competitive advantages.",
-        takeaway: "Early regulatory compliance investment pays dividends in market access and customer trust."
       }
     ],
     quiz: [
@@ -95,92 +91,12 @@ const lessonPool = [
         title: "Anchoring Strategies",
         content: "The first number mentioned in a negotiation disproportionately influences the final outcome. Strategic anchoring can shift negotiations by 20-30%.",
         takeaway: "Always prepare multiple anchor points and lead with ambitious but justifiable positions."
-      },
-      {
-        title: "Reading Micro-Signals",
-        content: "Successful negotiators read verbal and non-verbal cues to understand true positions. Watch for hesitation patterns and body language shifts.",
-        takeaway: "Pause after key statements to observe reactions and gather intelligence on counterpart priorities."
       }
     ],
     quiz: [
       {
         question: "How much can strategic anchoring influence negotiations?",
         options: ["10-15%", "20-30%", "40-50%", "60-70%"],
-        correct: 1
-      }
-    ]
-  },
-  {
-    id: 'blockchain-basics',
-    title: 'Blockchain for Finance Leaders',
-    type: 'Tech Primer',
-    duration: 10,
-    difficulty: 'Beginner',
-    creator: 'MIT Sloan',
-    summary: 'Essential blockchain concepts every finance executive should know',
-    moods: ['curious', 'reflective'],
-    topics: ['Blockchain', 'Fintech Trends'],
-    sections: [
-      {
-        title: "Beyond Cryptocurrency",
-        content: "Blockchain's real value lies in immutable record-keeping and smart contracts. JPMorgan processes $6B daily through blockchain networks.",
-        takeaway: "Focus on blockchain's efficiency gains in clearing, settlement, and compliance rather than speculative assets."
-      }
-    ],
-    quiz: [
-      {
-        question: "What's blockchain's primary business value?",
-        options: ["Cryptocurrency trading", "Immutable records and smart contracts", "Social media", "Gaming"],
-        correct: 1
-      }
-    ]
-  },
-  {
-    id: 'team-psychology',
-    title: 'Remote Team Dynamics',
-    type: 'Leadership',
-    duration: 7,
-    difficulty: 'Intermediate',
-    creator: 'Stanford GSB',
-    summary: 'Building high-performance distributed teams in finance',
-    moods: ['reflective', 'focused'],
-    topics: ['Team Management', 'Executive Skills'],
-    sections: [
-      {
-        title: "Trust at Distance",
-        content: "Remote teams require explicit trust-building mechanisms. Weekly one-on-ones and transparent goal-setting increase team performance by 40%.",
-        takeaway: "Over-communicate expectations and create structured touchpoints to maintain team cohesion."
-      }
-    ],
-    quiz: [
-      {
-        question: "How much can structured remote management improve performance?",
-        options: ["20%", "30%", "40%", "50%"],
-        correct: 2
-      }
-    ]
-  },
-  {
-    id: 'market-volatility',
-    title: 'Leading Through Market Uncertainty',
-    type: 'Crisis Management',
-    duration: 9,
-    difficulty: 'Advanced',
-    creator: 'Wharton Executive Education',
-    summary: 'Decision-making frameworks for volatile market conditions',
-    moods: ['focused', 'reflective'],
-    topics: ['Market Analysis', 'Executive Skills'],
-    sections: [
-      {
-        title: "Scenario Planning Excellence",
-        content: "Top-performing firms use 3-scenario planning: optimistic, realistic, pessimistic. This approach reduces decision paralysis by 60% during crises.",
-        takeaway: "Prepare multiple contingency plans and communicate decision triggers clearly to your team."
-      }
-    ],
-    quiz: [
-      {
-        question: "How many scenarios should leaders prepare?",
-        options: ["2", "3", "4", "5"],
         correct: 1
       }
     ]
@@ -192,8 +108,7 @@ const badges = [
   { id: 'streak_7', name: 'Week Warrior', description: '7-day learning streak', icon: '🔥', requirement: 7 },
   { id: 'streak_30', name: 'Monthly Master', description: '30-day learning streak', icon: '💎', requirement: 30 },
   { id: 'topics_5', name: 'Curious Mind', description: 'Explored 5 different topics', icon: '🧠', requirement: 5 },
-  { id: 'advanced_3', name: 'Expert Level', description: 'Completed 3 advanced lessons', icon: '🎯', requirement: 3 },
-  { id: 'quiz_perfect', name: 'Perfect Score', description: 'Aced 5 quizzes in a row', icon: '⭐', requirement: 5 }
+  { id: 'advanced_3', name: 'Expert Level', description: 'Completed 3 advanced lessons', icon: '🎯', requirement: 3 }
 ];
 
 // User persistence and profile management
@@ -209,12 +124,10 @@ function loadUserProfile() {
       topicsMastered: 12,
       lessonsCompleted: 156,
       badges: ['streak_7', 'streak_30', 'topics_5'],
-      quizHistory: [],
       preferredDifficulty: 'Advanced',
       isPremium: true,
       totalMinutesLearned: 1240,
-      lastCommute: null,
-      nextCommutePlan: null
+      reflections: []
     };
     saveUserProfile();
   }
@@ -235,27 +148,18 @@ function updateWelcomeStats() {
 // Dynamic content recommendation engine
 function getRecommendedLessons(commuteDuration, mood, topics, path = 'focus') {
   let availableLessons = lessonPool.filter(lesson => {
-    // Filter by commute duration (allow some flexibility)
     const durationMatch = lesson.duration <= commuteDuration + 2;
-    
-    // Filter by mood
     const moodMatch = lesson.moods.includes(mood);
-    
-    // Filter by topics (if focusing)
-    const topicMatch = path === 'explore' || 
-      lesson.topics.some(topic => topics.includes(topic));
-    
+    const topicMatch = path === 'explore' || lesson.topics.some(topic => topics.includes(topic));
     return durationMatch && (moodMatch || path === 'explore') && topicMatch;
   });
 
-  // Add difficulty preference filtering
   if (userProfile.preferredDifficulty) {
     const preferredLessons = availableLessons.filter(l => l.difficulty === userProfile.preferredDifficulty);
     const otherLessons = availableLessons.filter(l => l.difficulty !== userProfile.preferredDifficulty);
     availableLessons = [...preferredLessons, ...otherLessons];
   }
 
-  // Add surprise element for explore mode
   if (path === 'explore') {
     const surpriseLessons = lessonPool.filter(lesson => 
       lesson.duration <= commuteDuration + 2 && 
@@ -264,7 +168,6 @@ function getRecommendedLessons(commuteDuration, mood, topics, path = 'focus') {
     availableLessons = [...availableLessons, ...surpriseLessons.slice(0, 1)];
   }
 
-  // Shuffle and return top 3
   return shuffleArray(availableLessons).slice(0, 3);
 }
 
@@ -280,8 +183,6 @@ function shuffleArray(array) {
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
   loadUserProfile();
-  
-  // Simulate loading with dynamic messages
   simulateAIProcessing();
   
   setTimeout(() => {
@@ -291,13 +192,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Screen navigation
 function showScreen(screenId) {
-  // Hide current screen
   const currentScreenEl = document.querySelector('.screen.active');
   if (currentScreenEl) {
     currentScreenEl.classList.remove('active');
   }
   
-  // Show new screen
   setTimeout(() => {
     const newScreen = document.getElementById(screenId);
     newScreen.classList.add('active');
@@ -312,17 +211,13 @@ function startCommute() {
 
 // Commute selection
 function selectCommute(duration, type) {
-  // Remove previous selections
   document.querySelectorAll('.commute-card').forEach(card => {
     card.classList.remove('selected');
   });
   
-  // Select current card
   event.target.closest('.commute-card').classList.add('selected');
-  
   selectedCommute = { duration, type };
   
-  // Auto-advance after selection
   setTimeout(() => {
     showScreen('mood-screen');
   }, 800);
@@ -330,14 +225,11 @@ function selectCommute(duration, type) {
 
 // Mood selection
 function selectMood(mood) {
-  // Remove previous selections
   document.querySelectorAll('.mood-card').forEach(card => {
     card.classList.remove('selected');
   });
   
-  // Select current card
   event.target.closest('.mood-card').classList.add('selected');
-  
   selectedMood = mood;
   updateMoodContinueButton();
 }
@@ -366,24 +258,95 @@ function updateMoodContinueButton() {
   }
 }
 
+// Path selection
+function selectPath(path) {
+  document.querySelectorAll('.path-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  
+  event.target.closest('.path-card').classList.add('selected');
+  selectedPath = path;
+  
+  setTimeout(() => {
+    generateContentRecommendations();
+    showScreen('content-screen');
+  }, 800);
+}
+
+// Difficulty selection
+function setDifficulty(level) {
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  event.target.classList.add('active');
+  userProfile.preferredDifficulty = level;
+  saveUserProfile();
+}
+
+// Generate content recommendations
+function generateContentRecommendations() {
+  const contentGrid = document.querySelector('.content-grid');
+  const loadingShimmer = document.getElementById('content-loading');
+  
+  loadingShimmer.style.display = 'block';
+  contentGrid.style.display = 'none';
+  
+  setTimeout(() => {
+    const recommendations = getRecommendedLessons(
+      selectedCommute.duration, 
+      selectedMood, 
+      selectedTopics, 
+      selectedPath
+    );
+    
+    contentGrid.innerHTML = '';
+    
+    recommendations.forEach((lesson, index) => {
+      const card = createContentCard(lesson, index === 0);
+      contentGrid.appendChild(card);
+    });
+    
+    loadingShimmer.style.display = 'none';
+    contentGrid.style.display = 'flex';
+    
+  }, 1500);
+}
+
+// Create content card
+function createContentCard(lesson, isFeatured = false) {
+  const card = document.createElement('div');
+  card.className = `content-card ${isFeatured ? 'featured' : ''}`;
+  card.onclick = () => selectContent(card, lesson);
+  
+  card.innerHTML = `
+    <div class="content-header">
+      <span class="content-type">${lesson.type}</span>
+      <span class="duration">${lesson.duration} min</span>
+    </div>
+    <h3>${lesson.title}</h3>
+    <p>${lesson.summary}</p>
+    <div class="content-meta">
+      <span class="difficulty">${lesson.difficulty}</span>
+      <span class="creator">by ${lesson.creator}</span>
+    </div>
+    ${isFeatured ? '<div class="recommended-badge">🎯 Perfect Match</div>' : ''}
+  `;
+  
+  return card;
+}
+
 // Content selection
-function selectContent(contentElement) {
-  // Remove previous selections
+function selectContent(contentElement, lessonData) {
   document.querySelectorAll('.content-card').forEach(card => {
     card.classList.remove('selected');
   });
   
-  // Select current card
   contentElement.classList.add('selected');
+  selectedContent = lessonData;
   
-  selectedContent = {
-    title: contentElement.querySelector('h3').textContent,
-    type: contentElement.querySelector('.content-type').textContent,
-    duration: contentElement.querySelector('.duration').textContent
-  };
-  
-  // Enable continue button
-  document.getElementById('content-continue-btn').disabled = false;
+  const continueBtn = document.getElementById('content-continue-btn');
+  continueBtn.disabled = false;
 }
 
 // Start learning
@@ -401,33 +364,35 @@ function initializeLearning() {
 
 // Update lesson content
 function updateLessonContent() {
-  const section = lessonSections[currentLessonSection];
+  if (!selectedContent || !selectedContent.sections) return;
+  
+  const section = selectedContent.sections[currentLessonSection];
   
   document.getElementById('lesson-title').textContent = selectedContent.title;
   document.querySelector('#lesson-section h3').textContent = section.title;
   document.querySelector('#lesson-section p').textContent = section.content;
   document.querySelector('.insight-highlight').innerHTML = `💡 <strong>Takeaway:</strong> ${section.takeaway}`;
   
-  // Update navigation buttons
   const prevBtn = document.getElementById('prev-btn');
   const nextBtn = document.getElementById('next-btn');
   
   prevBtn.disabled = currentLessonSection === 0;
-  nextBtn.textContent = currentLessonSection === lessonSections.length - 1 ? 'Complete' : 'Continue';
+  nextBtn.textContent = currentLessonSection === selectedContent.sections.length - 1 ? 'Complete' : 'Continue';
   
-  // Update progress
-  const progress = ((currentLessonSection + 1) / lessonSections.length) * 100;
+  const progress = ((currentLessonSection + 1) / selectedContent.sections.length) * 100;
   document.getElementById('lesson-progress-fill').style.width = progress + '%';
 }
 
 // Lesson navigation
 function nextSection() {
-  if (currentLessonSection < lessonSections.length - 1) {
+  if (currentLessonSection < selectedContent.sections.length - 1) {
     currentLessonSection++;
     updateLessonContent();
   } else {
-    // Complete lesson
-    completeLearning();
+    if (lessonTimer) {
+      clearInterval(lessonTimer);
+    }
+    startQuiz();
   }
 }
 
@@ -440,7 +405,7 @@ function previousSection() {
 
 // Lesson timer
 function startLessonTimer() {
-  let timeRemaining = 8 * 60; // 8 minutes in seconds
+  let timeRemaining = selectedContent.duration * 60;
   
   lessonTimer = setInterval(() => {
     if (!isPaused) {
@@ -453,7 +418,7 @@ function startLessonTimer() {
       
       if (timeRemaining <= 0) {
         clearInterval(lessonTimer);
-        completeLearning();
+        startQuiz();
       }
     }
   }, 1000);
@@ -466,24 +431,180 @@ function togglePause() {
   pauseBtn.textContent = isPaused ? '▶️' : '⏸️';
 }
 
-// Minimize learning (placeholder)
+// Minimize learning
 function minimizeLearning() {
-  alert('Minimize feature would allow background learning while using other apps.');
+  showToast('Minimize feature would allow background learning while using other apps.');
 }
 
-// Complete learning
-function completeLearning() {
-  if (lessonTimer) {
-    clearInterval(lessonTimer);
+// Quiz functionality
+function startQuiz() {
+  if (!selectedContent || !selectedContent.quiz) {
+    showScreen('reflection-screen');
+    return;
   }
+  
+  currentQuizQuestion = 0;
+  quizScore = 0;
+  showScreen('quiz-screen');
+  loadQuizQuestion();
+}
+
+function loadQuizQuestion() {
+  const quiz = selectedContent.quiz;
+  const question = quiz[currentQuizQuestion];
+  
+  document.getElementById('quiz-question-text').textContent = question.question;
+  document.getElementById('quiz-question-number').textContent = currentQuizQuestion + 1;
+  document.getElementById('quiz-total-questions').textContent = quiz.length;
+  
+  const optionsContainer = document.getElementById('quiz-options');
+  optionsContainer.innerHTML = '';
+  
+  question.options.forEach((option, index) => {
+    const optionElement = document.createElement('div');
+    optionElement.className = 'quiz-option';
+    optionElement.textContent = option;
+    optionElement.onclick = () => selectQuizOption(optionElement, index, question.correct);
+    optionsContainer.appendChild(optionElement);
+  });
+  
+  document.getElementById('quiz-next-btn').disabled = true;
+  document.getElementById('quiz-feedback').style.display = 'none';
+}
+
+function selectQuizOption(optionElement, selectedIndex, correctIndex) {
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.remove('selected', 'correct', 'incorrect');
+  });
+  
+  optionElement.classList.add('selected');
+  
+  const isCorrect = selectedIndex === correctIndex;
+  if (isCorrect) {
+    optionElement.classList.add('correct');
+    quizScore++;
+  } else {
+    optionElement.classList.add('incorrect');
+    document.querySelectorAll('.quiz-option')[correctIndex].classList.add('correct');
+  }
+  
+  const feedback = document.getElementById('quiz-feedback');
+  const feedbackIcon = document.getElementById('feedback-icon');
+  const feedbackText = document.getElementById('feedback-text');
+  
+  feedbackIcon.textContent = isCorrect ? '✅' : '❌';
+  feedbackText.textContent = isCorrect ? 'Correct! Great job.' : 'Not quite right. The correct answer is highlighted.';
+  feedback.style.display = 'block';
+  
+  document.getElementById('quiz-next-btn').disabled = false;
+}
+
+function nextQuizQuestion() {
+  currentQuizQuestion++;
+  if (currentQuizQuestion < selectedContent.quiz.length) {
+    loadQuizQuestion();
+  } else {
+    showScreen('reflection-screen');
+  }
+}
+
+function skipQuiz() {
+  showScreen('reflection-screen');
+}
+
+// Reflection functionality
+function saveReflection() {
+  const reflectionText = document.getElementById('reflection-text').value;
+  if (reflectionText.trim()) {
+    userProfile.reflections = userProfile.reflections || [];
+    userProfile.reflections.push({
+      lesson: selectedContent.title,
+      reflection: reflectionText,
+      date: new Date().toISOString()
+    });
+    saveUserProfile();
+  }
+  completeLearning();
+}
+
+function skipReflection() {
+  completeLearning();
+}
+
+// Enhanced completion
+function completeLearning() {
+  userProfile.lessonsCompleted++;
+  userProfile.totalMinutesLearned += selectedContent.duration;
+  userProfile.streak++;
+  
+  const newBadges = checkForNewBadges();
+  updateCompletionScreen(newBadges);
+  
+  saveUserProfile();
   showScreen('completion-screen');
 }
 
-// Completion actions
+function checkForNewBadges() {
+  const newBadges = [];
+  badges.forEach(badge => {
+    if (!userProfile.badges.includes(badge.id)) {
+      let earned = false;
+      
+      switch(badge.id) {
+        case 'streak_7':
+          earned = userProfile.streak >= 7;
+          break;
+        case 'streak_30':
+          earned = userProfile.streak >= 30;
+          break;
+        case 'topics_5':
+          earned = userProfile.topicsMastered >= 5;
+          break;
+        case 'advanced_3':
+          earned = userProfile.lessonsCompleted >= 3;
+          break;
+      }
+      
+      if (earned) {
+        userProfile.badges.push(badge.id);
+        newBadges.push(badge);
+      }
+    }
+  });
+  
+  return newBadges;
+}
+
+function updateCompletionScreen(newBadges) {
+  document.getElementById('completion-minutes').textContent = selectedContent.duration;
+  document.getElementById('completion-insights').textContent = selectedContent.sections.length;
+  document.getElementById('completion-streak').textContent = userProfile.streak;
+  
+  if (userProfile.isPremium) {
+    document.getElementById('total-time').textContent = (userProfile.totalMinutesLearned / 60).toFixed(1);
+    document.getElementById('skills-advanced').textContent = userProfile.topicsMastered;
+  }
+  
+  if (newBadges.length > 0) {
+    const badgeEarned = document.getElementById('badge-earned');
+    badgeEarned.style.display = 'block';
+    badgeEarned.querySelector('.badge-icon').textContent = newBadges[0].icon;
+    badgeEarned.querySelector('.badge-text').textContent = `${newBadges[0].name} Earned!`;
+  }
+  
+  const takeawaysList = document.getElementById('takeaways-list');
+  takeawaysList.innerHTML = '';
+  selectedContent.sections.forEach(section => {
+    const li = document.createElement('li');
+    li.textContent = section.takeaway;
+    takeawaysList.appendChild(li);
+  });
+}
+
+// Enhanced sharing
 function shareInsights() {
-  // Simulate sharing functionality
-  const insights = lessonSections.map(section => `• ${section.takeaway}`).join('\n');
-  const shareText = `Just completed a micro-learning session on "${selectedContent.title}" with @Commutr!\n\nKey takeaways:\n${insights}\n\n#MicroLearning #ProfessionalDevelopment`;
+  const insights = selectedContent.sections.map(section => `• ${section.takeaway}`).join('\n');
+  const shareText = `Day ${userProfile.streak} on Commutr — learned ${selectedContent.title.toLowerCase()}.\n\nKey insights:\n${insights}\n\n#microlearning #commute`;
   
   if (navigator.share) {
     navigator.share({
@@ -491,34 +612,64 @@ function shareInsights() {
       text: shareText
     });
   } else {
-    // Fallback - copy to clipboard
     navigator.clipboard.writeText(shareText).then(() => {
-      alert('Insights copied to clipboard! Share them on your favorite platform.');
+      showToast('Insights copied to clipboard!');
     });
   }
 }
 
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
 function planNextCommute() {
-  // Reset state for next session
   selectedCommute = null;
   selectedMood = null;
   selectedTopics = [];
   selectedContent = null;
+  selectedPath = null;
   currentLessonSection = 0;
   
-  // Clear selections
   document.querySelectorAll('.selected').forEach(el => {
     el.classList.remove('selected');
   });
   
-  // Reset buttons
   document.getElementById('mood-continue-btn').disabled = true;
   document.getElementById('content-continue-btn').disabled = true;
   
   showScreen('welcome-screen');
 }
 
-// Search functionality (placeholder)
+// Simulate realistic loading states
+function simulateAIProcessing() {
+  const messages = [
+    "Analyzing your preferences...",
+    "Curating personalized content...",
+    "Optimizing for your commute duration...",
+    "Preparing your learning journey..."
+  ];
+  
+  let messageIndex = 0;
+  const loadingText = document.querySelector('.loading-container p');
+  
+  const messageInterval = setInterval(() => {
+    if (messageIndex < messages.length) {
+      loadingText.textContent = messages[messageIndex];
+      messageIndex++;
+    } else {
+      clearInterval(messageInterval);
+    }
+  }, 500);
+}
+
+// Search functionality
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.querySelector('.search-input');
   if (searchInput) {
@@ -526,7 +677,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'Enter') {
         const searchTerm = e.target.value.trim();
         if (searchTerm) {
-          // Simulate adding custom topic
           const topicCloud = document.querySelector('.topic-cloud');
           const newTopic = document.createElement('span');
           newTopic.className = 'topic-tag selected';
@@ -566,58 +716,12 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Simulate realistic loading states
-function simulateAIProcessing() {
-  const messages = [
-    "Analyzing your preferences...",
-    "Curating personalized content...",
-    "Optimizing for your commute duration...",
-    "Preparing your learning journey..."
-  ];
-  
-  let messageIndex = 0;
-  const loadingText = document.querySelector('.loading-container p');
-  
-  const messageInterval = setInterval(() => {
-    if (messageIndex < messages.length) {
-      loadingText.textContent = messages[messageIndex];
-      messageIndex++;
-    } else {
-      clearInterval(messageInterval);
-    }
-  }, 500);
-}
-
-// Add some interactive feedback
-document.addEventListener('DOMContentLoaded', function() {
-  // Add click feedback to all interactive elements
-  document.addEventListener('click', function(e) {
-    if (e.target.matches('button, .card, .btn-primary, .btn-secondary')) {
-      e.target.style.transform = 'scale(0.98)';
-      setTimeout(() => {
-        e.target.style.transform = '';
-      }, 150);
-    }
-  });
-  
-  // Initialize loading simulation
-  simulateAIProcessing();
-});
-
-// Performance optimization - preload next screen content
-function preloadScreen(screenId) {
-  const screen = document.getElementById(screenId);
-  if (screen && !screen.dataset.loaded) {
-    // Mark as loaded to avoid duplicate processing
-    screen.dataset.loaded = 'true';
+// Add click feedback to interactive elements
+document.addEventListener('click', function(e) {
+  if (e.target.matches('button, .card, .btn-primary, .btn-secondary')) {
+    e.target.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+      e.target.style.transform = '';
+    }, 150);
   }
-}
-
-// Add smooth transitions and micro-interactions
-document.addEventListener('DOMContentLoaded', function() {
-  // Preload critical screens
-  setTimeout(() => {
-    preloadScreen('welcome-screen');
-    preloadScreen('commute-screen');
-  }, 1000);
 });
