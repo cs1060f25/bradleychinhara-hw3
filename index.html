@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hello World</title>
+    <meta name="description" content="A minimal Hello World site ready to deploy on Netlify or Vercel." />
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: #111827;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #22c55e;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(1200px 800px at 10% 10%, #111827 0%, var(--bg) 40%, #0b1222 100%);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .card {
+        width: 100%;
+        max-width: 720px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+        backdrop-filter: blur(6px);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 40px;
+        letter-spacing: -0.02em;
+      }
+      p { margin: 0; color: var(--muted); }
+      .actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+      .btn {
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.04);
+        color: var(--text);
+        text-decoration: none;
+        transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+      }
+      .btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.06); }
+      .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+      .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+      footer { margin-top: 20px; font-size: 12px; color: var(--muted); }
+      code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <main class="card" role="main">
+      <div class="badge" aria-live="polite" aria-label="deployment ready indicator">
+        <span class="dot" aria-hidden="true"></span>
+        Deployment ready
+      </div>
+      <h1>Hello, World! 🌍</h1>
+      <p>
+        This is a minimal, production-ready static site you can deploy on
+        <strong>Netlify</strong> or <strong>Vercel</strong> in seconds.
+      </p>
+      <div class="actions">
+        <a class="btn" href="https://app.netlify.com/drop" target="_blank" rel="noreferrer">Deploy to Netlify (Drag & Drop)</a>
+        <a class="btn" href="https://vercel.com/new" target="_blank" rel="noreferrer">Deploy to Vercel</a>
+        <a class="btn" href="./" onclick="navigator.clipboard.writeText(location.href);return false;">Copy URL</a>
+      </div>
+      <footer>
+        Tip: push this folder to GitHub and import into Netlify/Vercel for CI.
+      </footer>
+    </main>
+  </body>
+</html>
