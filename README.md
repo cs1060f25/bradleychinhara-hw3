@@ -3,7 +3,7 @@
 **Name:** Bradley Chinhara  
 **GitHub Username:** bradleychinhara  
 **Deployed URL:** [Will be updated after Netlify deployment]  
-**Team PRD:** https://docs.google.com/document/d/1KQPPxcL2w9WiuV7dAr9fdvQYX59JE0PsUdZU2mRx_1A/edit?usp=sharing
+**Team PRD:** https://drive.google.com/drive/folders/1XesILqGN_8k8slpYvwJJ7sIZVw57isRm
 
 ## About
 Commutr is an AI-powered micro-learning platform that delivers bite-sized learning modules (5–15 minutes) tailored to the length of a user's commute. This prototype demonstrates Quinn's premium user journey: a 42-year-old finance executive who transforms his 35-minute train commute into focused professional development time.

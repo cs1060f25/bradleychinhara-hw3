@@ -478,6 +478,14 @@ h2 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: relative;
+  padding-right: 100px; /* Make space for recommended badge */
+}
+
+.content-card.featured .content-header {
+  padding-right: 120px; /* Extra space for featured cards */
 }
 
 .content-type {
@@ -525,14 +533,15 @@ h2 {
 
 .recommended-badge {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 8px;
+  right: 8px;
   background: var(--accent);
   color: white;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 0.7rem;
   font-weight: 600;
+  z-index: 1;
 }
 
 /* Learning Interface */

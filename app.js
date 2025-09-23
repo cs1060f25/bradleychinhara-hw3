@@ -249,11 +249,26 @@ function selectCommute(duration, type) {
   });
   
   event.target.closest('.commute-card').classList.add('selected');
-  selectedCommute = { duration, type };
   
-  setTimeout(() => {
-    showScreen('mood-screen');
-  }, 800);
+  if (type === 'manual') {
+    // Prompt for manual entry
+    const manualDuration = prompt('Enter your commute length in minutes:', '25');
+    if (manualDuration && !isNaN(manualDuration) && manualDuration > 0) {
+      selectedCommute = { duration: parseInt(manualDuration), type: 'manual' };
+      setTimeout(() => {
+        showScreen('mood-screen');
+      }, 800);
+    } else {
+      // Remove selection if cancelled or invalid
+      event.target.closest('.commute-card').classList.remove('selected');
+      return;
+    }
+  } else {
+    selectedCommute = { duration, type };
+    setTimeout(() => {
+      showScreen('mood-screen');
+    }, 800);
+  }
 }
 
 // Mood selection
@@ -335,19 +350,27 @@ function generateContentRecommendations() {
     const topics = selectedTopics.length > 0 ? selectedTopics : ['AI & Leadership'];
     const path = selectedPath || 'focus';
     
-    const recommendations = getRecommendedLessons(commuteDuration, mood, topics, path);
+    let recommendations = getRecommendedLessons(commuteDuration, mood, topics, path);
+    
+    // Ensure we always have content to show
+    if (!recommendations || recommendations.length === 0) {
+      // Fallback to first 3 lessons from the pool
+      recommendations = lessonPool.slice(0, 3);
+    }
     
     // Add mood personalization explanation
     const headerInfo = document.querySelector('.content-header-info');
-    const existingExplanation = headerInfo.querySelector('.mood-explanation');
-    if (existingExplanation) {
-      existingExplanation.remove();
+    if (headerInfo) {
+      const existingExplanation = headerInfo.querySelector('.mood-explanation');
+      if (existingExplanation) {
+        existingExplanation.remove();
+      }
+      
+      const moodExplanation = document.createElement('div');
+      moodExplanation.className = 'mood-explanation';
+      moodExplanation.innerHTML = getMoodExplanation(mood, path);
+      headerInfo.appendChild(moodExplanation);
     }
-    
-    const moodExplanation = document.createElement('div');
-    moodExplanation.className = 'mood-explanation';
-    moodExplanation.innerHTML = getMoodExplanation(mood, path);
-    headerInfo.appendChild(moodExplanation);
     
     contentGrid.innerHTML = '';
     
@@ -361,6 +384,12 @@ function generateContentRecommendations() {
       loadingShimmer.style.display = 'none';
     }
     contentGrid.style.display = 'flex';
+    
+    // Enable continue button
+    const continueBtn = document.getElementById('content-continue-btn');
+    if (continueBtn) {
+      continueBtn.disabled = false;
+    }
     
   }, 1500);
 }
