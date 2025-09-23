@@ -2,7 +2,7 @@
 
 **Name:** Bradley Chinhara  
 **GitHub Username:** bradleychinhara  
-**Deployed URL:** [Will be updated after Netlify deployment]  
+**Deployed URL:** https://commutr.netlify.app/
 **Team PRD:** https://drive.google.com/drive/folders/1XesILqGN_8k8slpYvwJJ7sIZVw57isRm
 
 ## About
@@ -103,7 +103,7 @@ Commutr is an AI-powered micro-learning platform that transforms commute time in
    - Complete quizzes and share insights to LinkedIn
 
 ## 📦 Deployment
-This project is configured for automatic deployment to Netlify via GitHub integration with optimized build settings for static sites.
+https://commutr.netlify.app/
 
 ## Team Members
 - Zainab Adamji
@@ -113,4 +113,4 @@ This project is configured for automatic deployment to Netlify via GitHub integr
 - Namat Noori
 
 ---
-*CS1060 HW3 - Rapid Prototype*
+
