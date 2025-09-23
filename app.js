@@ -33,9 +33,34 @@ const lessonPool = [
         takeaway: "Focus on developing emotional intelligence and strategic thinking as AI handles operational complexity."
       },
       {
+        title: "Building AI-Ready Culture",
+        content: "Cultural transformation precedes technological transformation. Leaders must create psychological safety for experimentation while addressing employee fears about job displacement.",
+        takeaway: "Invest in change management and transparent communication about AI's role in augmenting, not replacing, human capabilities."
+      },
+      {
+        title: "Data-Driven Decision Making",
+        content: "AI effectiveness depends on data quality and organizational data literacy. Leaders must champion data governance and ensure teams understand how to interpret AI insights.",
+        takeaway: "Establish clear data governance frameworks and invest in team training on AI interpretation and decision-making."
+      },
+      {
         title: "Strategic Implementation",
         content: "Successful AI transformation requires a phased approach. Start with pilot programs in non-critical areas to build confidence and learn before scaling to core business functions.",
         takeaway: "Begin with low-risk, high-impact AI implementations to demonstrate value and build organizational buy-in."
+      },
+      {
+        title: "Measuring AI ROI",
+        content: "Traditional ROI metrics may not capture AI's full value. Consider productivity gains, decision speed improvements, and risk reduction alongside direct cost savings.",
+        takeaway: "Develop comprehensive metrics that capture both quantitative and qualitative benefits of AI implementation."
+      },
+      {
+        title: "Ethical AI Leadership",
+        content: "Leaders must establish ethical guidelines for AI use, ensuring fairness, transparency, and accountability in automated decision-making processes.",
+        takeaway: "Create clear ethical AI policies and governance structures to maintain trust and regulatory compliance."
+      },
+      {
+        title: "Future-Proofing Your Organization",
+        content: "AI technology evolves rapidly. Build adaptive capabilities and continuous learning systems rather than betting on specific technologies.",
+        takeaway: "Focus on building organizational agility and learning capacity rather than committing to specific AI solutions."
       }
     ],
     quiz: [
@@ -66,6 +91,36 @@ const lessonPool = [
         title: "Digital Banking Evolution",
         content: "Traditional banks are accelerating digital transformation, with 73% increasing tech budgets. Neo-banks face profitability pressure as interest rates rise.",
         takeaway: "Focus on sustainable unit economics over rapid growth in current market conditions."
+      },
+      {
+        title: "Embedded Finance Revolution",
+        content: "Non-financial companies are integrating payment and lending services. Shopify's merchant lending and Uber's instant pay demonstrate the $7 trillion embedded finance opportunity.",
+        takeaway: "Consider how financial services can be seamlessly integrated into your customer journey."
+      },
+      {
+        title: "RegTech Investment Surge",
+        content: "Regulatory technology spending will reach $55B by 2025. AI-powered compliance monitoring and automated reporting are becoming competitive advantages.",
+        takeaway: "Invest in RegTech solutions to turn compliance from cost center to competitive advantage."
+      },
+      {
+        title: "Cryptocurrency Institutional Adoption",
+        content: "Major institutions are building crypto capabilities. BlackRock's Bitcoin ETF and JPMorgan's blockchain initiatives signal mainstream acceptance.",
+        takeaway: "Develop a clear cryptocurrency strategy aligned with institutional risk tolerance and regulatory requirements."
+      },
+      {
+        title: "Open Banking Expansion",
+        content: "Open banking APIs enable third-party financial services. PSD2 in Europe and similar regulations globally are creating new partnership opportunities.",
+        takeaway: "Explore open banking partnerships to expand service offerings without building from scratch."
+      },
+      {
+        title: "AI in Risk Management",
+        content: "Machine learning models are revolutionizing credit scoring and fraud detection. Real-time risk assessment enables instant lending decisions.",
+        takeaway: "Implement AI-driven risk models to improve decision speed while maintaining risk quality."
+      },
+      {
+        title: "Sustainable Finance Growth",
+        content: "ESG-focused fintech solutions are growing 40% annually. Green bonds and carbon credit trading platforms represent emerging opportunities.",
+        takeaway: "Integrate sustainability metrics into financial products to meet growing ESG demand."
       }
     ],
     quiz: [
@@ -91,12 +146,192 @@ const lessonPool = [
         title: "Anchoring Strategies",
         content: "The first number mentioned in a negotiation disproportionately influences the final outcome. Strategic anchoring can shift negotiations by 20-30%.",
         takeaway: "Always prepare multiple anchor points and lead with ambitious but justifiable positions."
+      },
+      {
+        title: "Reading Body Language",
+        content: "Non-verbal cues reveal true intentions. Watch for micro-expressions, posture changes, and vocal tone shifts that indicate comfort levels and decision points.",
+        takeaway: "Develop your ability to read and control non-verbal communication for negotiation advantage."
+      },
+      {
+        title: "The Power of Silence",
+        content: "Strategic pauses create pressure and encourage the other party to reveal information. Silence after making an offer often leads to concessions.",
+        takeaway: "Use silence as a negotiation tool - resist the urge to fill every pause with words."
+      },
+      {
+        title: "BATNA Development",
+        content: "Your Best Alternative to a Negotiated Agreement determines your negotiating power. Strong BATNAs enable confident decision-making and walking away.",
+        takeaway: "Always develop multiple alternatives before entering any negotiation to strengthen your position."
+      },
+      {
+        title: "Emotional Intelligence in Negotiations",
+        content: "Managing emotions - both yours and theirs - is crucial for successful outcomes. Recognize emotional triggers and use empathy strategically.",
+        takeaway: "Master emotional regulation and use emotional intelligence to build rapport and influence outcomes."
+      },
+      {
+        title: "Multi-Party Negotiation Dynamics",
+        content: "Complex negotiations involve multiple stakeholders with different interests. Map all parties, understand their motivations, and build coalitions.",
+        takeaway: "In multi-party negotiations, focus on building alliances and managing competing interests strategically."
       }
     ],
     quiz: [
       {
         question: "How much can strategic anchoring influence negotiations?",
         options: ["10-15%", "20-30%", "40-50%", "60-70%"],
+        correct: 1
+      }
+    ]
+  },
+  {
+    id: 'strategic-thinking',
+    title: 'Strategic Thinking for Executives',
+    type: 'Leadership Framework',
+    duration: 18,
+    difficulty: 'Advanced',
+    creator: 'Michael Porter, Harvard',
+    summary: 'Develop systematic approaches to strategic analysis and decision-making',
+    moods: ['reflective', 'focused'],
+    topics: ['Executive Skills', 'Strategy'],
+    sections: [
+      {
+        title: "Systems Thinking Fundamentals",
+        content: "Strategic leaders see interconnections and feedback loops. Understanding how decisions ripple through complex systems prevents unintended consequences.",
+        takeaway: "Always consider second and third-order effects when making strategic decisions."
+      },
+      {
+        title: "Competitive Advantage Analysis",
+        content: "Sustainable competitive advantages are rare and valuable. Use Porter's Five Forces to analyze industry structure and identify defensible positions.",
+        takeaway: "Focus on building advantages that are difficult for competitors to replicate or substitute."
+      },
+      {
+        title: "Scenario Planning Techniques",
+        content: "The future is uncertain, but not random. Develop multiple plausible scenarios to stress-test strategies and build adaptive capacity.",
+        takeaway: "Plan for multiple futures simultaneously to build organizational resilience."
+      },
+      {
+        title: "Resource-Based Strategy",
+        content: "Your unique resources and capabilities determine strategic options. Audit internal strengths and align strategy with distinctive competencies.",
+        takeaway: "Build strategy around your unique strengths rather than copying competitors."
+      },
+      {
+        title: "Strategic Trade-offs",
+        content: "Strategy is about choosing what not to do. Clear trade-offs create focus and prevent strategic drift that dilutes competitive position.",
+        takeaway: "Make explicit trade-offs and communicate them clearly throughout the organization."
+      },
+      {
+        title: "Innovation Strategy",
+        content: "Innovation requires systematic processes, not just creativity. Balance exploration of new opportunities with exploitation of existing capabilities.",
+        takeaway: "Create structured innovation processes while maintaining operational excellence."
+      }
+    ],
+    quiz: [
+      {
+        question: "What is the primary purpose of scenario planning?",
+        options: ["Predict the future", "Build organizational resilience", "Reduce costs", "Increase efficiency"],
+        correct: 1
+      }
+    ]
+  },
+  {
+    id: 'digital-transformation',
+    title: 'Digital Transformation Leadership',
+    type: 'Change Management',
+    duration: 20,
+    difficulty: 'Advanced',
+    creator: 'MIT Sloan Executive Education',
+    summary: 'Lead successful digital transformation initiatives in traditional organizations',
+    moods: ['energetic', 'focused'],
+    topics: ['Digital Strategy', 'Change Management'],
+    sections: [
+      {
+        title: "Digital Maturity Assessment",
+        content: "Transformation starts with honest assessment. Evaluate current digital capabilities across technology, data, processes, and culture dimensions.",
+        takeaway: "Conduct comprehensive digital maturity audits before planning transformation initiatives."
+      },
+      {
+        title: "Platform Strategy Development",
+        content: "Digital platforms create exponential value through network effects. Shift from linear value chains to platform-based business models.",
+        takeaway: "Think platforms, not products - focus on enabling ecosystems rather than controlling value chains."
+      },
+      {
+        title: "Data as Strategic Asset",
+        content: "Data is the new oil, but only if refined properly. Develop data governance, analytics capabilities, and data-driven decision cultures.",
+        takeaway: "Treat data as a strategic asset requiring investment in governance, quality, and analytics capabilities."
+      },
+      {
+        title: "Agile Operating Models",
+        content: "Digital organizations operate differently. Implement agile methodologies, cross-functional teams, and rapid iteration cycles.",
+        takeaway: "Adopt agile operating models that enable rapid experimentation and learning."
+      },
+      {
+        title: "Customer Experience Redesign",
+        content: "Digital transformation is ultimately about customer experience. Map customer journeys and eliminate friction points through technology.",
+        takeaway: "Start with customer needs and work backward to design digital solutions."
+      },
+      {
+        title: "Change Management at Scale",
+        content: "Digital transformation affects everyone. Develop comprehensive change management strategies addressing skills, culture, and mindset shifts.",
+        takeaway: "Invest heavily in change management - technology is easy, changing people is hard."
+      },
+      {
+        title: "Measuring Digital Success",
+        content: "Traditional metrics may not capture digital value. Develop new KPIs for digital initiatives including user engagement and platform effects.",
+        takeaway: "Create new measurement frameworks that capture the full value of digital transformation."
+      }
+    ],
+    quiz: [
+      {
+        question: "What should be the starting point for digital transformation?",
+        options: ["Technology selection", "Customer needs assessment", "Cost reduction targets", "Competitor analysis"],
+        correct: 1
+      }
+    ]
+  },
+  {
+    id: 'crisis-leadership',
+    title: 'Crisis Leadership Essentials',
+    type: 'Executive Response',
+    duration: 16,
+    difficulty: 'Advanced',
+    creator: 'Wharton Crisis Management',
+    summary: 'Lead effectively through uncertainty, disruption, and organizational crisis',
+    moods: ['focused', 'reflective'],
+    topics: ['Leadership', 'Crisis Management'],
+    sections: [
+      {
+        title: "Crisis Recognition Patterns",
+        content: "Crises often follow predictable patterns. Learn to recognize early warning signals and distinguish between temporary setbacks and systemic threats.",
+        takeaway: "Develop early warning systems and pattern recognition skills to identify crises before they escalate."
+      },
+      {
+        title: "Rapid Decision-Making Frameworks",
+        content: "Crisis demands fast decisions with incomplete information. Use structured frameworks like OODA loops to accelerate decision cycles.",
+        takeaway: "Implement rapid decision-making processes that balance speed with quality under pressure."
+      },
+      {
+        title: "Stakeholder Communication Strategy",
+        content: "Crisis communication requires transparency, frequency, and consistency. Different stakeholders need different messages and channels.",
+        takeaway: "Develop multi-stakeholder communication plans with clear, consistent messaging across all channels."
+      },
+      {
+        title: "Team Psychology Under Pressure",
+        content: "Stress affects team performance and decision-making. Understand psychological responses to crisis and maintain team effectiveness.",
+        takeaway: "Monitor team psychological health and implement stress management techniques during crisis periods."
+      },
+      {
+        title: "Resource Reallocation Speed",
+        content: "Crises require rapid resource shifts. Develop capabilities to quickly reallocate people, capital, and attention to critical priorities.",
+        takeaway: "Build organizational flexibility to rapidly redeploy resources when circumstances change."
+      },
+      {
+        title: "Learning from Crisis",
+        content: "Every crisis contains lessons for future resilience. Conduct thorough post-crisis analysis to strengthen organizational capabilities.",
+        takeaway: "Systematically capture crisis lessons to build organizational resilience and preparedness."
+      }
+    ],
+    quiz: [
+      {
+        question: "What is the most important element of crisis communication?",
+        options: ["Speed", "Transparency and consistency", "Positive messaging", "Technical accuracy"],
         correct: 1
       }
     ]
